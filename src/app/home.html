@@ -53,7 +53,7 @@
         class="theme-toggle"
         type="button"
         [attr.aria-label]="t().theme + ' ' + (dark() ? t().light : t().dark)"
-        (click)="toggleTheme()"
+        (click)="toggleTheme($event)"
       >
         @if (dark()) {
           <svg viewBox="0 0 24 24" aria-hidden="true">

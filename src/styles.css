@@ -1890,3 +1890,30 @@ footer {
     rotate: none;
   }
 }
+/* A circular reveal of the complete new theme, anchored to the toggle. */
+.theme-reveal-active,
+.theme-reveal-active * {
+  transition: none !important;
+}
+::view-transition-group(root) {
+  animation: none;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+::view-transition {
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
+}

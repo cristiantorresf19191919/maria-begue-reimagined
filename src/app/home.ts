@@ -1,5 +1,7 @@
+import { ThemeTransition } from './theme-transition';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   computed,
   signal,
@@ -174,10 +176,18 @@ export class Home {
     }
   }
 
-  toggleTheme(): void {
-    this.dark.update((value) => !value);
-    this.applyTheme();
-    this.savePreference('mb-theme', this.dark() ? 'dark' : 'light');
+  private readonly themeTransition = inject(ThemeTransition);
+  private readonly changeDetector = inject(ChangeDetectorRef);
+  toggleTheme(event: Event): void {
+    this.themeTransition.reveal(
+      event.currentTarget instanceof HTMLElement ? event.currentTarget : null,
+      () => {
+        this.dark.update((value) => !value);
+        this.applyTheme();
+        this.savePreference('mb-theme', this.dark() ? 'dark' : 'light');
+        this.changeDetector.detectChanges();
+      },
+    );
   }
 
   private applyTheme(): void {
