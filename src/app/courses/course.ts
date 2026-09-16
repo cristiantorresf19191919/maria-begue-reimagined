@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  ElementRef,
   inject,
   signal,
 } from '@angular/core';
@@ -38,12 +39,91 @@ export class Course {
   private returnFocus: HTMLElement | null = null;
   private previousOverflow = '';
 
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private motionFrame = 0;
+  private slideAnimations: Animation[] = [];
+  private touchOrigin: { x: number; y: number } | null = null;
+  private suppressClickUntil = 0;
+
   changeTestimonial(direction: number): void {
-    this.testimonialIndex.update(
-      (index) => (index + direction + this.testimonials.length) % this.testimonials.length,
+    this.selectTestimonial(
+      (this.testimonialIndex() + direction + this.testimonials.length) % this.testimonials.length,
+      direction,
     );
   }
+  selectTestimonial(index: number, direction = index > this.testimonialIndex() ? 1 : -1): void {
+    if (index === this.testimonialIndex()) return;
+    this.testimonialIndex.set(index);
+    cancelAnimationFrame(this.motionFrame);
+    for (const animation of this.slideAnimations) animation.cancel();
+    this.slideAnimations = [];
+    this.motionFrame = requestAnimationFrame(() => {
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const root = this.host.nativeElement;
+      const strip = root.querySelector<HTMLElement>('.proof-thumbnails');
+      const selected = strip?.querySelector<HTMLElement>(`button:nth-child(${index + 1})`);
+      if (strip && selected) {
+        strip.scrollTo({
+          left:
+            strip.scrollLeft +
+            selected.getBoundingClientRect().left -
+            strip.getBoundingClientRect().left -
+            (strip.clientWidth - selected.offsetWidth) / 2,
+          behavior: reduced ? 'instant' : 'smooth',
+        });
+      }
+      if (reduced) return;
+      const targets = root.querySelectorAll<HTMLElement>(
+        '.proof-image img, .proof-caption h3, .proof-caption > p[lang], dialog[open] > img',
+      );
+      for (const [order, target] of Array.from(targets).entries()) {
+        const isImage = target.tagName === 'IMG';
+        this.slideAnimations.push(
+          target.animate(
+            [
+              {
+                opacity: 0,
+                transform: `translate3d(${direction * (isImage ? 44 : 18)}px, ${isImage ? 0 : 8}px, 0) scale(${isImage ? 0.965 : 1})`,
+              },
+              { opacity: 1, transform: 'translate3d(0, 0, 0) scale(1)' },
+            ],
+            {
+              duration: isImage ? 480 : 360,
+              delay: isImage ? 0 : order * 30,
+              easing: 'cubic-bezier(.16, 1, .3, 1)',
+              fill: 'backwards',
+            },
+          ),
+        );
+      }
+    });
+  }
+  startSwipe(event: TouchEvent): void {
+    const touch = event.touches.length === 1 ? event.touches[0] : undefined;
+    this.touchOrigin = touch ? { x: touch.clientX, y: touch.clientY } : null;
+  }
+  cancelSwipe(): void {
+    this.touchOrigin = null;
+  }
+  endSwipe(event: TouchEvent): void {
+    const origin = this.touchOrigin;
+    this.touchOrigin = null;
+    const touch = event.changedTouches[0];
+    if (!origin || !touch) return;
+    const dx = touch.clientX - origin.x;
+    const dy = touch.clientY - origin.y;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+      this.suppressClickUntil = performance.now() + 500;
+      this.changeTestimonial(dx < 0 ? 1 : -1);
+    }
+  }
   openTestimonial(dialog: HTMLDialogElement, event: Event): void {
+    if (
+      event instanceof MouseEvent &&
+      event.detail !== 0 &&
+      performance.now() < this.suppressClickUntil
+    )
+      return;
     this.returnFocus = event.currentTarget instanceof HTMLElement ? event.currentTarget : null;
     this.previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -68,6 +148,8 @@ export class Course {
 
   constructor() {
     this.destroyRef.onDestroy(() => {
+      cancelAnimationFrame(this.motionFrame);
+      for (const animation of this.slideAnimations) animation.cancel();
       if (document.querySelector('dialog[open]'))
         document.body.style.overflow = this.previousOverflow;
     });
@@ -76,6 +158,13 @@ export class Course {
     );
     this.destroyRef.onDestroy(() => selection.unsubscribe());
     afterNextRender(() => {
+      const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+      const stopMotion = () => {
+        if (motionPreference.matches)
+          for (const animation of this.slideAnimations) animation.cancel();
+      };
+      motionPreference.addEventListener('change', stopMotion);
+      this.destroyRef.onDestroy(() => motionPreference.removeEventListener('change', stopMotion));
       this.syncUrl();
       const saved = this.read('mb-theme');
       this.dark.set(saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches);

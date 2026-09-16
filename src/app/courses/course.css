@@ -1403,3 +1403,74 @@
     transition: none;
   }
 }
+/* Input-driven motion: stable controls, directional slides, tactile selection. */
+.proof-image {
+  overflow: hidden;
+  touch-action: pan-y pinch-zoom;
+}
+.proof-image img {
+  transform-origin: 50% 60%;
+}
+.proof-thumbnails {
+  padding-top: 30px;
+  padding-bottom: 18px;
+}
+.proof-thumbnails button {
+  transition:
+    transform 0.42s cubic-bezier(0.22, 1.4, 0.36, 1),
+    border-color 0.25s,
+    box-shadow 0.3s;
+  transform: scale(0.94);
+}
+.proof-thumbnails button[aria-pressed='true'] {
+  transform: translateY(-5px) scale(1);
+  box-shadow: 0 8px 18px #00000014;
+}
+.proof-thumbnails button:active,
+.proof-controls button:active {
+  transform: scale(0.9);
+}
+.proof-controls button {
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1.4, 0.36, 1),
+    background 0.2s;
+}
+.testimonial-dialog[open] {
+  animation: proof-dialog-in 0.36s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.testimonial-dialog[open]::backdrop {
+  animation: proof-backdrop-in 0.25s ease-out;
+}
+@keyframes proof-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes proof-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .proof-thumbnails button,
+  .proof-controls button {
+    transition: none;
+  }
+  .proof-thumbnails button[aria-pressed='true'],
+  .proof-thumbnails button:active,
+  .proof-controls button:active {
+    transform: none;
+  }
+  .testimonial-dialog[open],
+  .testimonial-dialog[open]::backdrop {
+    animation: none;
+  }
+}

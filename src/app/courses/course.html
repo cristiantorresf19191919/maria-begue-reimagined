@@ -341,6 +341,9 @@
           <button
             type="button"
             class="proof-image"
+            (touchstart)="startSwipe($event)"
+            (touchend)="endSwipe($event)"
+            (touchcancel)="cancelSwipe()"
             (click)="openTestimonial(testimonialDialog, $event)"
             [attr.aria-label]="depth().expand + ': ' + testimonial().author"
           >
@@ -359,7 +362,7 @@
               type="button"
               [attr.aria-label]="i + 1 + ': ' + item.author"
               [attr.aria-pressed]="testimonialIndex() === i"
-              (click)="testimonialIndex.set(i)"
+              (click)="selectTestimonial(i)"
             >
               <img [src]="item.src" alt="" width="120" height="70" loading="lazy" /><span>{{
                 i + 1
