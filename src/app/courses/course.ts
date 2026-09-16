@@ -10,6 +10,8 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { DepthDirective } from '../depth.directive';
+import { courseDepth } from './course-depth';
+import { courseTestimonials } from './course-testimonials';
 import { courseContent } from './course-content';
 import type { CourseKind, Language } from './course-content';
 
@@ -28,6 +30,29 @@ export class Course {
   readonly selectedTopic = signal(0);
   readonly topicControl = new FormControl(1, { nonNullable: true });
   readonly dock = signal(false);
+  readonly depth = computed(() => courseDepth[this.language()]);
+  readonly detail = computed(() => this.depth()[this.kind]);
+  readonly testimonials = courseTestimonials[this.kind];
+  readonly testimonialIndex = signal(0);
+  readonly testimonial = computed(() => this.testimonials[this.testimonialIndex()]);
+  private returnFocus: HTMLElement | null = null;
+  private previousOverflow = '';
+
+  changeTestimonial(direction: number): void {
+    this.testimonialIndex.update(
+      (index) => (index + direction + this.testimonials.length) % this.testimonials.length,
+    );
+  }
+  openTestimonial(dialog: HTMLDialogElement, event: Event): void {
+    this.returnFocus = event.currentTarget instanceof HTMLElement ? event.currentTarget : null;
+    this.previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    dialog.showModal();
+  }
+  closeTestimonial(): void {
+    document.body.style.overflow = this.previousOverflow;
+    this.returnFocus?.focus();
+  }
   readonly t = computed(() => courseContent[this.language()]);
   readonly course = computed(() => this.t()[this.kind]);
   readonly topic = computed(() => this.course().topics[this.selectedTopic()]);
@@ -42,6 +67,10 @@ export class Course {
   private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
+    this.destroyRef.onDestroy(() => {
+      if (document.querySelector('dialog[open]'))
+        document.body.style.overflow = this.previousOverflow;
+    });
     const selection = this.topicControl.valueChanges.subscribe((value) =>
       this.selectTopic(value - 1),
     );
