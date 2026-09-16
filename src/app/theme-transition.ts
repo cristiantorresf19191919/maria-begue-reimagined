@@ -18,10 +18,12 @@ export class ThemeTransition {
     });
   }
 
-  reveal(origin: HTMLElement | null, update: () => void): void {
+  reveal(event: Event, update: () => void): void {
+    const origin = event.currentTarget instanceof HTMLElement ? event.currentTarget : null;
     const rect = origin?.getBoundingClientRect();
-    const x = rect ? rect.left + rect.width / 2 : innerWidth / 2;
-    const y = rect ? rect.top + rect.height / 2 : innerHeight / 2;
+    const pointer = event instanceof MouseEvent && event.detail > 0;
+    const x = pointer ? event.clientX : rect ? rect.left + rect.width / 2 : innerWidth / 2;
+    const y = pointer ? event.clientY : rect ? rect.top + rect.height / 2 : innerHeight / 2;
     // Preserve every toggle, even when another snapshot is still being captured.
     this.active?.skipTransition();
     this.queue = this.queue
@@ -32,12 +34,16 @@ export class ThemeTransition {
           return;
         }
         const root = document.documentElement;
+        const radius = Math.ceil(
+          Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)),
+        );
+        root.style.setProperty('--theme-origin-x', `${x}px`);
+        root.style.setProperty('--theme-origin-y', `${y}px`);
+        root.style.setProperty('--theme-radius', `${radius}px`);
         root.classList.add('theme-reveal-active');
         const transition = document.startViewTransition(update);
         this.active = transition;
-        let revealAnimation: Animation | null = null;
         const cleanup = () => {
-          revealAnimation?.cancel();
           if (this.active === transition) {
             this.active = null;
             root.classList.remove('theme-reveal-active');
@@ -50,20 +56,6 @@ export class ThemeTransition {
               transition.skipTransition();
               return;
             }
-            const radius = Math.ceil(
-              Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)),
-            );
-            revealAnimation = root.animate(
-              {
-                clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`],
-              },
-              {
-                duration: 650,
-                easing: 'cubic-bezier(.65, 0, .35, 1)',
-                pseudoElement: '::view-transition-new(root)',
-                fill: 'both',
-              },
-            );
           })
           .catch(() => {
             /* A skipped snapshot still applies the theme update. */

@@ -275,15 +275,12 @@ export class Course {
   private readonly themeTransition = inject(ThemeTransition);
   private readonly changeDetector = inject(ChangeDetectorRef);
   toggleTheme(event: Event): void {
-    this.themeTransition.reveal(
-      event.currentTarget instanceof HTMLElement ? event.currentTarget : null,
-      () => {
-        this.dark.update((value) => !value);
-        this.applyTheme();
-        this.save('mb-theme', this.dark() ? 'dark' : 'light');
-        this.changeDetector.detectChanges();
-      },
-    );
+    this.themeTransition.reveal(event, () => {
+      this.dark.update((value) => !value);
+      this.applyTheme();
+      this.save('mb-theme', this.dark() ? 'dark' : 'light');
+      this.changeDetector.detectChanges();
+    });
   }
   private applyTheme(): void {
     document.documentElement.dataset['theme'] = this.dark() ? 'dark' : 'light';

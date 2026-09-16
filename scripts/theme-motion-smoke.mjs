@@ -14,7 +14,7 @@ try {
     for (const target of ['dark', 'light']) {
       if ((await page.evaluate(() => document.documentElement.dataset.theme)) === target) continue;
       const box = await page.locator('.theme-toggle').boundingBox();
-      await page.locator('.theme-toggle').click();
+      await page.locator('.theme-toggle').click({ position: { x: 9, y: 12 } });
       await page.waitForFunction(() =>
         document
           .getAnimations()
@@ -30,9 +30,11 @@ try {
       });
       assert.equal(data.theme, target);
       assert.ok(
-        Math.abs(
-          Number(data.keys[0].clipPath.match(/at ([\d.]+)px/)[1]) - (box.x + box.width / 2),
-        ) < 1,
+        Math.abs(Number(data.keys[0].clipPath.match(/at ([\d.]+)px/)[1]) - (box.x + 9)) < 1,
+      );
+      assert.ok(
+        Math.abs(Number(data.keys[0].clipPath.match(/at [\d.]+px ([\d.]+)px/)[1]) - (box.y + 12)) <
+          1,
       );
       if (!route && target === 'dark')
         await page.screenshot({ path: 'artifacts/theme-radial-midpoint.png' });
