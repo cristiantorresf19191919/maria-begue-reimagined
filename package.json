@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "node scripts/smoke.mjs"
+    "test": "node scripts/smoke.mjs",
+    "test:courses": "node scripts/courses-smoke.mjs"
   },
   "private": true,
   "packageManager": "npm@10.9.2",

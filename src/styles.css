@@ -1745,3 +1745,148 @@ footer {
 .personal-note {
   pointer-events: none;
 }
+
+/* Matching course editions on the homepage. */
+.service-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.service-grid .consulting {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr 0.8fr;
+  gap: 12px 30px;
+  align-items: center;
+}
+.service-grid .consulting .card-top {
+  grid-column: 1/-1;
+}
+.service-grid .consulting .card-icon {
+  display: none;
+}
+.service-grid .consulting h3 {
+  font-size: 1.6rem;
+}
+.service-grid .consulting p {
+  margin: 0;
+}
+.service-grid .consulting .card-link {
+  margin: 0;
+  border-top: 0;
+  padding: 16px 0;
+}
+.service-card.growth,
+.service-card.monetize {
+  position: relative;
+  padding: 30px;
+}
+.mini-course-cover {
+  padding: 25px;
+  background: #183c32;
+  color: #e0ef9b;
+  border-radius: 6px 30px 6px 6px;
+  margin: 25px 0 28px;
+  min-height: 230px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.monetize .mini-course-cover {
+  background: #6b3223;
+  color: #ffce9e;
+}
+.mini-course-cover > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.65rem;
+  letter-spacing: 0.13em;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 14px;
+}
+.mini-course-cover > strong {
+  display: block;
+  font:
+    italic 3.4rem/1.2 Georgia,
+    serif;
+  letter-spacing: -0.055em;
+  margin-top: 28px;
+}
+.mini-course-cover > span:not(.mini-star) {
+  font-size: 1.1rem;
+}
+.mini-star {
+  position: absolute;
+  bottom: 20px;
+  right: 24px;
+  font-size: 2.9rem;
+  transition: rotate 0.6s;
+}
+.service-card:hover .mini-course-cover {
+  transform: translateY(-3px) rotate(-1deg);
+}
+.service-card:hover .mini-star {
+  rotate: 90deg;
+}
+.course-card-price {
+  float: right;
+  align-self: flex-end;
+  font:
+    500 1.55rem 'Manrope',
+    sans-serif;
+  letter-spacing: -0.04em;
+  margin-bottom: 12px;
+}
+.service-card.growth h3,
+.service-card.monetize h3 {
+  white-space: normal;
+}
+@media (max-width: 800px) {
+  .service-grid .consulting {
+    grid-template-columns: 1fr 1fr;
+  }
+  .service-grid .consulting .card-link {
+    grid-column: 1/-1;
+  }
+  .mini-course-cover {
+    padding: 20px;
+  }
+  .mini-course-cover > strong {
+    font-size: 2.6rem;
+  }
+  .service-card.growth,
+  .service-card.monetize {
+    padding: 23px;
+  }
+}
+@media (max-width: 600px) {
+  .service-grid {
+    grid-template-columns: 1fr;
+  }
+  .service-grid .consulting {
+    display: flex;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .service-grid .consulting h3 {
+    max-width: none;
+  }
+  .service-grid .consulting .card-link {
+    border-top: 1px solid var(--line);
+  }
+  .mini-course-cover > strong {
+    font-size: 3.2rem;
+  }
+  .service-card.growth h3,
+  .service-card.monetize h3 {
+    max-width: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .service-card:hover .mini-course-cover {
+    transform: none;
+  }
+  .service-card:hover .mini-star {
+    rotate: none;
+  }
+}

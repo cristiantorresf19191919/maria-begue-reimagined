@@ -89,13 +89,10 @@ try {
     await page.locator('.consulting a').getAttribute('href'),
     'https://www.mariabegue.me/consultorias',
   );
-  assert.equal(
-    await page.locator('.growth a').getAttribute('href'),
-    'https://www.mariabegue.me/crece-tu-linkedin',
-  );
+  assert.equal(await page.locator('.growth a').getAttribute('href'), '/crece-tu-linkedin?lang=es');
   assert.equal(
     await page.locator('.monetize a').getAttribute('href'),
-    'https://www.mariabegue.me/monetiza-tu-linkedin',
+    '/monetiza-tu-linkedin?lang=es',
   );
   assert.equal(
     await page.locator('.newsletter-copy a').getAttribute('href'),
@@ -114,7 +111,7 @@ try {
   await page.waitForFunction(() => document.querySelector('input[value="income"]')?.checked);
   assert.equal(new URL(page.url()).searchParams.get('goal'), 'income');
   await page.waitForFunction(() =>
-    document.querySelector('.result-link')?.getAttribute('href')?.endsWith('/monetiza-tu-linkedin'),
+    document.querySelector('.result-link')?.getAttribute('href')?.includes('/monetiza-tu-linkedin'),
   );
   assert.match(await page.locator('.result-link').getAttribute('href'), /monetiza-tu-linkedin/);
   await page.goBack();

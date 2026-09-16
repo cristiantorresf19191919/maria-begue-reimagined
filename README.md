@@ -12,7 +12,16 @@ An independent Angular redesign concept inspired by María Begué’s work on pe
 - Angular signals and OnPush rendering; CSS entrance animations, intersection-driven reveals and native Angular menu transitions.
 - Reduced-motion support, keyboard navigation, skip link, native FAQ disclosures and accessible language/theme controls.
 - Optimized WebP photography, explicit image sizing and lazy loading below the fold.
-- Official external links for consulting, course enrollment and newsletter signup. No personal data is collected by this concept.
+- Dedicated course pages link to official enrollment; consulting and newsletter signup remain external. No personal data is collected by this concept.
+
+## Course editions
+
+- `/crece-tu-linkedin`: audience-growth edition in forest green and chartreuse.
+- `/monetiza-tu-linkedin`: monetization edition in terracotta and apricot.
+- Matching homepage course cards, shareable interactive curriculum (`topic=1`, `2`, or `3`), materials overview, instructor section, FAQs and a contextual enrollment dock.
+- Both pages support ES/EN and light/dark themes. The courses themselves are described as Spanish-language training.
+- Reference prices (€97 / €67), durations and materials were checked against the official pages on September 16, 2026. Visitors must confirm current terms on the official website; checkout and course access remain there.
+- `npm run test:courses` verifies direct routes, URL history, all theme/language combinations, responsive layouts, mobile accessibility and course-to-home navigation.
 
 ## Interactive enhancements
 
@@ -67,15 +76,17 @@ Reference pages reviewed on September 14, 2026:
 - https://www.mariabegue.me/monetiza-tu-linkedin
 - https://www.mariabegue.me/suscribete-newsletter
 
-The audience figures reflect the original homepage, not live counters. Current course prices and availability are deliberately left to the official pages. English translations apply to this concept; the linked services and newsletter may be Spanish only.
+The audience figures reflect the original homepage, not live counters. Course pages show dated reference prices, with final prices and availability confirmed on the official pages. English translations apply to this concept; the linked services and newsletter may be Spanish only.
 
 María’s name and photographs belong to their respective rights holders. Images were sourced from the original Wix-hosted site and optimized to WebP for this concept; they are not offered under a software license. The decorative newsletter card contains newly written illustrative copy, not a claimed quotation or actual newsletter edition. Fonts: DM Sans and Manrope via Google Fonts; Georgia as a system serif.
 
 ## Implementation
 
 - `src/app/content.ts`: paired Spanish/English content.
-- `src/app/app.ts`: locale, theme and mobile navigation state; reveal lifecycle cleanup.
-- `src/app/app.html`: semantic page structure.
+- `src/app/app.ts`: lightweight route host; `home.ts` contains homepage state and lifecycle cleanup.
+- `src/app/home.html`: semantic homepage structure.
+- `src/app/courses/`: course data, components and visual system.
+- `src/app/app.routes.ts`: lazy-loaded homepage and course routes.
 - `src/styles.css`: responsive visual system and motion.
 - `public/preferences.js`: early theme preference application.
 - `scripts/smoke.mjs`: reproducible browser and accessibility checks.

@@ -1,0 +1,324 @@
+<div
+  class="course-page"
+  [class.course-earn]="kind === 'earn'"
+  [class.course-grow]="kind === 'grow'"
+>
+  <a class="skip-link" [href]="href('course-main')">{{ t().skip }}</a>
+  <header class="site-header course-header" (keydown.escape)="closeMenu(true)">
+    <div class="reading-progress" aria-hidden="true"></div>
+    <div class="nav-wrap">
+      <a class="wordmark" [href]="homeHref()" aria-label="María Begué"
+        ><span class="brand-symbol" aria-hidden="true">m.</span>maría begué<span
+          class="brand-dot"
+          aria-hidden="true"
+          >✳</span
+        ></a
+      >
+      <nav class="desktop-nav" [attr.aria-label]="t().courses">
+        <a [href]="href('programa')">{{ t().program }}</a
+        ><a [href]="href('recursos')">{{ t().materials }}</a
+        ><a [href]="href('preguntas')">{{ t().questions }}</a>
+      </nav>
+      <div class="nav-actions">
+        <div
+          class="language-switch"
+          role="group"
+          [attr.aria-label]="language() === 'es' ? 'Idioma' : 'Language'"
+        >
+          <button
+            type="button"
+            aria-label="Español"
+            [attr.aria-pressed]="language() === 'es'"
+            (click)="setLanguage('es')"
+          >
+            ES</button
+          ><span aria-hidden="true">/</span
+          ><button
+            type="button"
+            aria-label="English"
+            [attr.aria-pressed]="language() === 'en'"
+            (click)="setLanguage('en')"
+          >
+            EN
+          </button>
+        </div>
+        <button
+          class="theme-toggle"
+          type="button"
+          [attr.aria-label]="t().theme"
+          [attr.aria-pressed]="dark()"
+          (click)="toggleTheme()"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            @if (dark()) {
+              <circle cx="12" cy="12" r="4" />
+              <path
+                d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"
+              />
+            } @else {
+              <path d="M20 15.5A9 9 0 0 1 8.5 4 9 9 0 1 0 20 15.5Z" />
+            }
+          </svg>
+        </button>
+        <a class="button small header-cta" [href]="official()"
+          >{{ t().enroll }} <span aria-hidden="true">↗</span></a
+        >
+        <button
+          id="course-menu-toggle"
+          type="button"
+          class="menu-toggle"
+          [attr.aria-label]="menuOpen() ? t().close : t().menu"
+          [attr.aria-expanded]="menuOpen()"
+          aria-controls="course-mobile-nav"
+          (click)="menuOpen.set(!menuOpen())"
+        >
+          <span aria-hidden="true">{{ menuOpen() ? '×' : '☰' }}</span>
+        </button>
+      </div>
+    </div>
+    @if (menuOpen()) {
+      <nav
+        id="course-mobile-nav"
+        class="mobile-nav"
+        [attr.aria-label]="t().courses"
+        animate.enter="menu-enter"
+      >
+        <a [href]="href('programa')" (click)="closeMenu()">{{ t().program }} ↗</a
+        ><a [href]="href('recursos')" (click)="closeMenu()">{{ t().materials }} ↗</a
+        ><a [href]="href('preguntas')" (click)="closeMenu()">{{ t().questions }} ↗</a
+        ><a [href]="homeHref()">{{ t().back }} ↗</a>
+      </nav>
+    }
+  </header>
+  <main id="course-main" tabindex="-1">
+    <div class="course-breadcrumb wrap">
+      <a [href]="homeHref()">{{ t().home }}</a
+      ><span aria-hidden="true">/</span><a [href]="homeHref('trabajemos')">{{ t().courses }}</a
+      ><span aria-hidden="true">/</span><span aria-current="page">{{ course().title }}</span>
+    </div>
+    <section class="course-hero wrap">
+      <div class="course-hero-copy">
+        <p class="eyebrow hero-in">{{ t().by }}</p>
+        <h1 class="hero-in delay-one">
+          <span class="course-title">{{ course().title }}</span
+          >{{ course().hero }}<br /><em>{{ course().accent }}</em>
+        </h1>
+        <p class="course-lead hero-in delay-two">{{ course().intro }}</p>
+        <div class="course-hero-actions hero-in delay-three">
+          <a class="button course-primary" [href]="official()"
+            >{{ t().enroll }} <span aria-hidden="true">↗</span></a
+          ><a class="text-link" [href]="href('programa')"
+            >{{ t().browse }} <span aria-hidden="true">↓</span></a
+          >
+        </div>
+        <div class="course-purchase hero-in delay-three">
+          <strong>{{ price() }}</strong>
+          <p>{{ t().priceNote }}</p>
+        </div>
+      </div>
+      <div class="course-cover-wrap hero-in delay-two">
+        <div class="course-cover" appDepth aria-hidden="true">
+          <div class="cover-top">
+            <span>MB / ACADEMY</span><span>VOL. {{ course().number }}</span>
+          </div>
+          <div class="cover-rule"></div>
+          <p class="cover-deck">{{ course().deck }}</p>
+          <p class="cover-word">{{ course().word }}</p>
+          <p class="cover-linkedin">{{ language() === 'es' ? 'tu' : 'your' }} LinkedIn</p>
+          <div class="cover-path">
+            @for (word of course().ribbon; track word; let i = $index) {
+              <div>
+                <span>0{{ i + 1 }}</span
+                ><strong>{{ word }}</strong
+                ><span>↗</span>
+              </div>
+            }
+          </div>
+          <div class="cover-bottom"><span>María Begué</span><span class="cover-star">✳</span></div>
+        </div>
+        <div class="cover-caption">
+          <span>{{ t().language }}</span
+          ><span>{{ t().pace }} ↗</span>
+        </div>
+      </div>
+    </section>
+    <div class="course-facts wrap">
+      <p>
+        <strong>{{ course().minutes }}</strong
+        ><span>{{ t().video }}</span>
+      </p>
+      <p>
+        <strong>Online</strong><span>{{ t().pace }}</span>
+      </p>
+      <p>
+        <strong>ES</strong><span>{{ t().language }}</span>
+      </p>
+      <span class="facts-mark" aria-hidden="true">{{ course().number }} — MB.</span>
+    </div>
+    <section class="course-program wrap" id="programa">
+      <div class="course-section-heading course-reveal">
+        <div>
+          <p class="eyebrow">{{ t().programEyebrow }}</p>
+          <h2>
+            {{ t().programTitle }}<br /><em>{{ t().programAccent }}</em>
+          </h2>
+        </div>
+        <p>{{ t().programIntro }}</p>
+      </div>
+      <div class="curriculum course-reveal">
+        <fieldset class="topic-options">
+          <legend class="sr-only">{{ t().themeLabel }}</legend>
+          @for (item of course().topics; track $index; let i = $index) {
+            <label class="topic-option" [class.selected]="selectedTopic() === i"
+              ><input
+                type="radio"
+                name="course-topic"
+                [value]="i + 1"
+                [attr.value]="i + 1"
+                [formControl]="topicControl"
+              /><span class="topic-index">0{{ i + 1 }}</span
+              ><span
+                ><small>{{ item.short }}</small
+                ><strong>{{ item.title }}</strong></span
+              ><span class="topic-arrow" aria-hidden="true">↗</span></label
+            >
+          }
+        </fieldset>
+        <div class="topic-panel">
+          <p class="sr-only" aria-live="polite" aria-atomic="true">{{ topic().title }}</p>
+          @for (item of [topic()]; track item.title) {
+            <div class="topic-panel-content" animate.enter="result-enter">
+              <div class="topic-panel-top">
+                <span class="eyebrow">{{ t().topic }} / 0{{ selectedTopic() + 1 }}</span
+                ><span aria-hidden="true">✳</span>
+              </div>
+              <h3>{{ item.title }}</h3>
+              <p>{{ item.intro }}</p>
+              <ul>
+                @for (point of item.points; track point) {
+                  <li><span aria-hidden="true">↗</span>{{ point }}</li>
+                }
+              </ul>
+              <div class="topic-position" aria-hidden="true">
+                @for (step of course().topics; track $index; let i = $index) {
+                  <span [class.current]="selectedTopic() === i"></span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+    <section id="recursos" class="course-materials">
+      <div class="wrap">
+        <div class="course-section-heading course-reveal">
+          <div>
+            <p class="eyebrow">{{ t().materialsEyebrow }}</p>
+            <h2>
+              {{ t().materialsTitle }}<br /><em>{{ t().materialsAccent }}</em>
+            </h2>
+          </div>
+          <p>{{ t().materialsIntro }}</p>
+        </div>
+        <div class="resource-grid">
+          @for (resource of course().resources; track resource.title) {
+            <article class="resource-card course-reveal">
+              <div class="resource-number">
+                {{ resource.number }}<span>{{ resource.unit }}</span>
+              </div>
+              <h3>{{ resource.title }}</h3>
+              <p>{{ resource.text }}</p>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+    <section class="course-audience wrap course-reveal">
+      <div>
+        <p class="eyebrow">{{ t().audienceEyebrow }}</p>
+        <h2>{{ t().audienceTitle }}</h2>
+      </div>
+      <ul>
+        @for (line of course().audience; track line) {
+          <li><span aria-hidden="true">↗</span>{{ line }}</li>
+        }
+      </ul>
+    </section>
+    <section class="course-instructor wrap course-reveal">
+      <div class="instructor-portrait">
+        <img
+          src="/images/maria-hero.webp"
+          [alt]="t().instructorAlt"
+          width="1100"
+          height="977"
+          loading="lazy"
+        /><span class="instructor-name" aria-hidden="true">María.</span>
+      </div>
+      <div>
+        <p class="eyebrow">{{ t().instructorEyebrow }}</p>
+        <h2>
+          {{ t().instructorTitle }}<br /><em>{{ t().instructorAccent }}</em>
+        </h2>
+        <p class="instructor-description">{{ t().instructorText }}</p>
+        <a class="text-link" [href]="homeHref('sobre-mi')">{{ t().instructorLink }} ↗</a>
+      </div>
+    </section>
+    <section class="faq-section course-faq wrap" id="preguntas">
+      <div class="course-reveal">
+        <p class="eyebrow">{{ t().faqEyebrow }}</p>
+        <h2>{{ t().faqTitle }}</h2>
+      </div>
+      <div class="faq-list course-reveal">
+        @for (faq of t().faqs; track faq.q) {
+          <details>
+            <summary>{{ faq.q }}<span class="faq-plus" aria-hidden="true">+</span></summary>
+            <p>{{ faq.a }}</p>
+          </details>
+        }
+      </div>
+    </section>
+    <section class="final-offer wrap course-reveal">
+      <div>
+        <p class="eyebrow">{{ t().finalEyebrow }}</p>
+        <h2>
+          {{ t().finalTitle }}<br /><em>{{ t().finalAccent }}</em>
+        </h2>
+      </div>
+      <div class="final-purchase">
+        <p>{{ course().title }}</p>
+        <strong>{{ price() }}</strong
+        ><a class="button course-primary" [href]="official()"
+          >{{ t().enroll }} <span aria-hidden="true">↗</span></a
+        ><small>{{ t().priceNote }}</small>
+      </div>
+    </section>
+    <a class="other-course wrap" [href]="otherHref()"
+      ><span
+        ><small>{{ t().other }}</small
+        ><strong>{{ course().otherTitle }}</strong></span
+      ><span class="other-arrow" aria-hidden="true">↗</span></a
+    >
+  </main>
+  <footer class="wrap course-footer">
+    <div class="footer-main">
+      <a class="wordmark" [href]="homeHref()">maría begué<span aria-hidden="true">✳</span></a
+      ><a class="text-link" [href]="homeHref()">{{ t().back }} ↗</a>
+    </div>
+    <div class="footer-bottom">
+      <p>{{ t().disclaimer }}</p>
+      <a [href]="official()">{{ t().reference }} ↗</a>
+    </div>
+    <p class="source-date">{{ t().snapshot }}</p>
+  </footer>
+  @if (dock() && !menuOpen()) {
+    <aside class="course-dock" [attr.aria-label]="t().enroll" animate.enter="menu-enter">
+      <div>
+        <strong>{{ course().title }}</strong
+        ><span>{{ price() }} · {{ t().language }}</span>
+      </div>
+      <a class="button course-primary" [href]="official()"
+        >{{ t().enroll }} <span aria-hidden="true">↗</span></a
+      >
+    </aside>
+  }
+</div>

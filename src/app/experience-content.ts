@@ -8,7 +8,7 @@ export const experienceContent = {
     suggestion: 'TU PUNTO DE PARTIDA',
     step: 'Primer paso',
     helper: 'Una orientación para explorar las opciones, sin registros ni compromisos.',
-    visit: 'Ver detalles en la web oficial',
+    visit: 'Explorar esta opción',
     result: 'Opción sugerida:',
     top: 'Volver al inicio',
     goals: [
@@ -68,7 +68,7 @@ export const experienceContent = {
     suggestion: 'YOUR STARTING POINT',
     step: 'First step',
     helper: 'A little direction to explore your options. No signup or commitment.',
-    visit: 'See details on the official website',
+    visit: 'Explore this option',
     result: 'Suggested option:',
     top: 'Back to top',
     goals: [

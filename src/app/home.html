@@ -241,7 +241,7 @@
                   </li>
                 }
               </ol>
-              <a class="result-link" [href]="item.href"
+              <a class="result-link" [href]="goalHref()"
                 >{{ experience().visit }} <span aria-hidden="true">↗</span></a
               >
             </div>
@@ -267,10 +267,16 @@
           <span class="eyebrow">{{ t().growTag }}</span
           ><span class="card-number">02</span>
         </div>
-        <div class="card-icon" aria-hidden="true">↗</div>
+        <div class="mini-course-cover" aria-hidden="true">
+          <div><span>MB / ACADEMY</span><span>VOL. 01</span></div>
+          <strong>{{ language() === 'es' ? 'Crece.' : 'Grow.' }}</strong
+          ><span>{{ language() === 'es' ? 'tu' : 'your' }} LinkedIn</span
+          ><span class="mini-star">✳</span>
+        </div>
+        <span class="course-card-price">97 €</span>
         <h3>{{ t().growTitle }}</h3>
         <p>{{ t().growText }}</p>
-        <a class="card-link" href="https://www.mariabegue.me/crece-tu-linkedin"
+        <a class="card-link" [href]="courseHref('crece-tu-linkedin')"
           >{{ t().growLink }}<span aria-hidden="true">↗</span></a
         >
       </article>
@@ -279,10 +285,16 @@
           <span class="eyebrow">{{ t().earnTag }}</span
           ><span class="card-number">03</span>
         </div>
-        <div class="card-icon" aria-hidden="true">↗</div>
+        <div class="mini-course-cover" aria-hidden="true">
+          <div><span>MB / ACADEMY</span><span>VOL. 02</span></div>
+          <strong>{{ language() === 'es' ? 'Monetiza.' : 'Monetize.' }}</strong
+          ><span>{{ language() === 'es' ? 'tu' : 'your' }} LinkedIn</span
+          ><span class="mini-star">✳</span>
+        </div>
+        <span class="course-card-price">67 €</span>
         <h3>{{ t().earnTitle }}</h3>
         <p>{{ t().earnText }}</p>
-        <a class="card-link" href="https://www.mariabegue.me/monetiza-tu-linkedin"
+        <a class="card-link" [href]="courseHref('monetiza-tu-linkedin')"
           >{{ t().earnLink }}<span aria-hidden="true">↗</span></a
         >
       </article>
