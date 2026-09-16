@@ -14,6 +14,13 @@ An independent Angular redesign concept inspired by María Begué’s work on pe
 - Optimized WebP photography, explicit image sizing and lazy loading below the fold.
 - Official external links for consulting, course enrollment and newsletter signup. No personal data is collected by this concept.
 
+## Interactive enhancements
+
+- Goal-based guide with three practical starting points, fully translated and reflected in the `goal` URL parameter. Native radio controls support keyboard arrows; browser Back/Forward restores the selection.
+- Pointer-responsive perspective on the portrait and newsletter card. It is disabled for touch and reduced-motion preferences, including preference changes during a visit.
+- Reading progress, active-section navigation and a floating back-to-top control. Scroll updates are batched with animation frames and observers are cleaned up.
+- Additional smoke checks cover all three recommendations, URL/history behavior, keyboard selection, depth reset, section tracking and mobile accessibility.
+
 ## Development
 
 Requires Node 24.15+ (Node 24 LTS recommended).

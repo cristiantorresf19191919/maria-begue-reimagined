@@ -1,15 +1,30 @@
-<a class="skip-link" [attr.href]="'?lang=' + language() + '#main'">{{ t().skip }}</a>
-<header class="site-header" (keydown.escape)="closeMenu(true)">
+<a class="skip-link" [attr.href]="sectionHref('main')">{{ t().skip }}</a>
+<header
+  class="site-header"
+  [class.is-scrolled]="showBackToTop()"
+  (keydown.escape)="closeMenu(true)"
+>
+  <div class="reading-progress" aria-hidden="true"></div>
   <div class="nav-wrap">
-    <a [attr.href]="'?lang=' + language() + '#'" class="wordmark" aria-label="María Begué"
+    <a [attr.href]="sectionHref('')" class="wordmark" aria-label="María Begué"
       ><span class="brand-symbol" aria-hidden="true">m.</span> maría begué<span class="brand-dot"
         >✳</span
       ></a
     >
     <nav class="desktop-nav" [attr.aria-label]="language() === 'es' ? 'Principal' : 'Main'">
-      <a [attr.href]="'?lang=' + language() + '#sobre-mi'">{{ t().about }}</a
-      ><a [attr.href]="'?lang=' + language() + '#trabajemos'">{{ t().work }}</a
-      ><a [attr.href]="'?lang=' + language() + '#newsletter'">{{ t().newsletter }}</a>
+      <a
+        [attr.href]="sectionHref('sobre-mi')"
+        [attr.aria-current]="activeSection() === 'sobre-mi' ? 'location' : null"
+        >{{ t().about }}</a
+      ><a
+        [attr.href]="sectionHref('trabajemos')"
+        [attr.aria-current]="activeSection() === 'trabajemos' ? 'location' : null"
+        >{{ t().work }}</a
+      ><a
+        [attr.href]="sectionHref('newsletter')"
+        [attr.aria-current]="activeSection() === 'newsletter' ? 'location' : null"
+        >{{ t().newsletter }}</a
+      >
     </nav>
     <div class="nav-actions">
       <div
@@ -53,7 +68,10 @@
           </svg>
         }
       </button>
-      <a [attr.href]="'?lang=' + language() + '#trabajemos'" class="button small header-cta"
+      <a
+        [attr.href]="sectionHref('trabajemos')"
+        [attr.aria-current]="activeSection() === 'trabajemos' ? 'location' : null"
+        class="button small header-cta"
         >{{ t().start }} <span aria-hidden="true">↗</span></a
       >
       <button
@@ -76,11 +94,20 @@
       animate.enter="menu-enter"
       [attr.aria-label]="language() === 'es' ? 'Navegación móvil' : 'Mobile navigation'"
     >
-      <a [attr.href]="'?lang=' + language() + '#sobre-mi'" (click)="closeMenu()"
+      <a
+        [attr.href]="sectionHref('sobre-mi')"
+        [attr.aria-current]="activeSection() === 'sobre-mi' ? 'location' : null"
+        (click)="closeMenu()"
         >{{ t().about }} <span aria-hidden="true">↗</span></a
-      ><a [attr.href]="'?lang=' + language() + '#trabajemos'" (click)="closeMenu()"
+      ><a
+        [attr.href]="sectionHref('trabajemos')"
+        [attr.aria-current]="activeSection() === 'trabajemos' ? 'location' : null"
+        (click)="closeMenu()"
         >{{ t().work }} <span aria-hidden="true">↗</span></a
-      ><a [attr.href]="'?lang=' + language() + '#newsletter'" (click)="closeMenu()"
+      ><a
+        [attr.href]="sectionHref('newsletter')"
+        [attr.aria-current]="activeSection() === 'newsletter' ? 'location' : null"
+        (click)="closeMenu()"
         >{{ t().newsletter }} <span aria-hidden="true">↗</span></a
       >
     </nav>
@@ -96,18 +123,27 @@
       </h1>
       <p class="hero-description hero-in delay-two">{{ t().intro }}</p>
       <div class="hero-actions hero-in delay-three">
-        <a class="button" [attr.href]="'?lang=' + language() + '#trabajemos'"
+        <a
+          class="button"
+          [attr.href]="sectionHref('trabajemos')"
+          [attr.aria-current]="activeSection() === 'trabajemos' ? 'location' : null"
           >{{ t().primary }} <span aria-hidden="true">↗</span></a
-        ><a class="text-link" [attr.href]="'?lang=' + language() + '#sobre-mi'"
+        ><a
+          class="text-link"
+          [attr.href]="sectionHref('sobre-mi')"
+          [attr.aria-current]="activeSection() === 'sobre-mi' ? 'location' : null"
           >{{ t().secondary }} <span aria-hidden="true">↗</span></a
         >
       </div>
-      <a class="scroll-cue hero-in delay-three" [attr.href]="'?lang=' + language() + '#trabajemos'"
+      <a
+        class="scroll-cue hero-in delay-three"
+        [attr.href]="sectionHref('trabajemos')"
+        [attr.aria-current]="activeSection() === 'trabajemos' ? 'location' : null"
         ><span aria-hidden="true">↓</span>{{ t().scroll }}</a
       >
     </div>
     <div class="hero-visual hero-in delay-two">
-      <div class="portrait-frame">
+      <div class="portrait-frame" appDepth>
         <img
           src="/images/maria-hero.webp"
           [alt]="t().portrait"
@@ -152,6 +188,67 @@
       </div>
       <p class="section-intro">{{ t().pathIntro }}</p>
     </div>
+    <div class="goal-guide reveal" aria-labelledby="guide-heading">
+      <div class="guide-intro">
+        <p class="eyebrow">{{ experience().eyebrow }}</p>
+        <h3 id="guide-heading">
+          {{ experience().title }} <em>{{ experience().accent }}</em>
+        </h3>
+        <p>{{ experience().intro }}</p>
+      </div>
+      <div class="guide-layout">
+        <fieldset class="goal-options">
+          <legend>{{ experience().legend }}</legend>
+          @for (option of experience().goals; track option.id; let i = $index) {
+            <label class="goal-option" [class.selected]="selectedGoal() === i">
+              <input
+                type="radio"
+                name="personal-goal"
+                [value]="option.id"
+                [checked]="selectedGoal() === i"
+                (change)="selectGoal(i)"
+              />
+              <span class="goal-index" aria-hidden="true">0{{ i + 1 }}</span>
+              <span class="goal-label"
+                ><strong>{{ option.label }}</strong
+                ><span>{{ option.detail }}</span></span
+              >
+              <span class="goal-check" aria-hidden="true">{{
+                selectedGoal() === i ? '✓' : '↗'
+              }}</span>
+            </label>
+          }
+          <p class="guide-helper">{{ experience().helper }}</p>
+        </fieldset>
+        <div class="goal-result">
+          <p class="sr-only" aria-live="polite" aria-atomic="true">
+            {{ experience().result }} {{ goal().title }}
+          </p>
+          @for (item of [goal()]; track item.id) {
+            <div class="goal-result-content" animate.enter="result-enter">
+              <div class="result-heading">
+                <p class="eyebrow">{{ experience().suggestion }}</p>
+                <span class="result-spark" aria-hidden="true">✳</span>
+              </div>
+              <p class="result-format">{{ item.format }}</p>
+              <h4>{{ item.title }}</h4>
+              <p class="result-description">{{ item.description }}</p>
+              <ol class="result-steps">
+                @for (step of item.steps; track $index) {
+                  <li>
+                    <span aria-hidden="true">0{{ $index + 1 }}</span
+                    >{{ step }}
+                  </li>
+                }
+              </ol>
+              <a class="result-link" [href]="item.href"
+                >{{ experience().visit }} <span aria-hidden="true">↗</span></a
+              >
+            </div>
+          }
+        </div>
+      </div>
+    </div>
     <div class="service-grid">
       <article class="service-card consulting reveal">
         <div class="card-top">
@@ -195,7 +292,9 @@
   <section id="sobre-mi" class="about-section wrap">
     <div class="about-visual reveal">
       <div class="about-image">
-        <span class="about-backdrop" aria-hidden="true">hola.</span
+        <span class="about-backdrop" aria-hidden="true">{{
+          language() === 'es' ? 'hola.' : 'hello.'
+        }}</span
         ><img
           src="/images/maria-about.webp"
           [alt]="t().aboutImage"
@@ -231,7 +330,7 @@
         >
         <p class="newsletter-note">{{ t().newsletterNote }}</p>
       </div>
-      <div class="letter">
+      <div class="letter" appDepth>
         <div class="letter-header">
           <span>{{ t().edition }}</span
           ><span aria-hidden="true">✳</span>
@@ -265,18 +364,21 @@
     <h2>
       {{ t().footerTitle }}<br /><em>{{ t().footerAccent }}</em>
     </h2>
-    <a class="button" [attr.href]="'?lang=' + language() + '#trabajemos'"
+    <a
+      class="button"
+      [attr.href]="sectionHref('trabajemos')"
+      [attr.aria-current]="activeSection() === 'trabajemos' ? 'location' : null"
       >{{ t().footerLink }}<span aria-hidden="true">↗</span></a
     >
   </section>
 </main>
 <footer class="wrap">
   <div class="footer-main">
-    <a class="wordmark" [attr.href]="'?lang=' + language() + '#'"
+    <a class="wordmark" [attr.href]="sectionHref('')"
       >maría begué<span class="brand-dot">✳</span></a
     >
     <p>{{ t().footerSub }}</p>
-    <a class="text-link" [attr.href]="'?lang=' + language() + '#'"
+    <a class="text-link" [attr.href]="sectionHref('')"
       >{{ t().back }} <span aria-hidden="true">↑</span></a
     >
   </div>
@@ -285,3 +387,13 @@
     <a [href]="official">{{ t().source }} ↗</a>
   </div>
 </footer>
+
+@if (showBackToTop() && !menuOpen()) {
+  <a
+    class="floating-top"
+    [attr.href]="sectionHref('main')"
+    [attr.aria-label]="experience().top"
+    animate.enter="menu-enter"
+    ><span aria-hidden="true">↑</span></a
+  >
+}

@@ -105,6 +105,78 @@ try {
     await page.evaluate(() => [...document.images].every((i) => i.complete && i.naturalWidth > 0)),
     true,
   );
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto(`${base}/?lang=en&goal=audience`);
+  await page.waitForFunction(() => document.querySelector('input[value="audience"]')?.checked);
+  assert.match(await page.locator('.goal-result h4').textContent(), /conversations/);
+  await page.locator('input[value="audience"]').focus();
+  await page.keyboard.press('ArrowRight');
+  await page.waitForFunction(() => document.querySelector('input[value="income"]')?.checked);
+  assert.equal(new URL(page.url()).searchParams.get('goal'), 'income');
+  await page.waitForFunction(() =>
+    document.querySelector('.result-link')?.getAttribute('href')?.endsWith('/monetiza-tu-linkedin'),
+  );
+  assert.match(await page.locator('.result-link').getAttribute('href'), /monetiza-tu-linkedin/);
+  await page.goBack();
+  await page.waitForFunction(() => document.querySelector('input[value="audience"]')?.checked);
+  await page.goForward();
+  await page.waitForFunction(() => document.querySelector('input[value="income"]')?.checked);
+  await page.getByRole('button', { name: 'Español', exact: true }).click();
+  await page.waitForFunction(() =>
+    document.querySelector('.goal-result h4')?.textContent?.includes('conocimiento'),
+  );
+  assert.match(await page.locator('.goal-result h4').textContent(), /conocimiento/);
+  await page.reload();
+  await page.waitForFunction(() => document.querySelector('input[value="income"]')?.checked);
+  await page.locator('input[value="clarity"]').focus();
+  await page.keyboard.press('Space');
+  await page.waitForFunction(() => document.querySelector('input[value="clarity"]')?.checked);
+  await page.waitForFunction(() =>
+    document.querySelector('.result-link')?.getAttribute('href')?.endsWith('/consultorias'),
+  );
+  assert.match(await page.locator('.result-link').getAttribute('href'), /consultorias/);
+  await page.locator('#newsletter').scrollIntoViewIfNeeded();
+  await page.waitForFunction(
+    () =>
+      document
+        .querySelector('.desktop-nav a[href$="#newsletter"]')
+        ?.getAttribute('aria-current') === 'location',
+  );
+  assert.ok(
+    await page.evaluate(
+      () => Number(document.documentElement.style.getPropertyValue('--reading-progress')) > 0.5,
+    ),
+  );
+  await page.locator('.floating-top').click();
+  await page.waitForFunction(() => scrollY < 120);
+  await page.locator('.portrait-frame').hover();
+  assert.equal(
+    await page.locator('.portrait-frame').evaluate((el) => el.style.getPropertyValue('--depth-x')),
+    '',
+  );
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.mouse.move(0, 0);
+  await page.locator('.portrait-frame').hover({ position: { x: 40, y: 80 } });
+  await page.waitForFunction(
+    () => document.querySelector('.portrait-frame').style.getPropertyValue('--depth-x') !== '',
+  );
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.waitForFunction(
+    () => document.querySelector('.portrait-frame').style.getPropertyValue('--depth-x') === '',
+  );
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator('.goal-guide').scrollIntoViewIfNeeded();
+  await page.screenshot({ path: 'artifacts/guide-mobile.png' });
+  const mobileResult = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+    .analyze();
+  assert.deepEqual(
+    mobileResult.violations.map((v) => v.id),
+    [],
+  );
+  console.log(
+    'PASS: goal recommendations, keyboard radio navigation, shareable URLs, browser history, section tracking, scroll progress, back to top, depth motion and mobile accessibility.',
+  );
   assert.deepEqual(errors, []);
   console.log(
     'PASS: languages, themes, persistence, 8 widths, keyboard, menu, FAQ, reduced motion, links, images and runtime errors.',
