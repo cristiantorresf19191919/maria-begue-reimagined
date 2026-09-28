@@ -54,15 +54,18 @@ Automated accessibility checks supplement manual visual and keyboard review; the
 
 ## Deployment
 
-The project is configured for Netlify in `netlify.toml`:
+Pushes to `main` in [the GitHub repository](https://github.com/cristiantorresf19191919/maria-begue-reimagined) automatically build and publish [the production site](https://maria-begue-reimagined.netlify.app).
+
+Netlify uses Node.js 24, runs `npm run build`, and publishes `dist/maria-begue/browser` as configured in `netlify.toml`. Repository access uses a read-only deploy key; a GitHub webhook triggers deployments.
 
 ```sh
-npm run build
-netlify link --id eeaab972-68a5-403b-adb3-fd600fbc555e
-netlify deploy --prod --dir dist/maria-begue/browser --no-build
+git switch main
+git add <changed-files>
+git commit -m "Describe your change"
+git push origin main
 ```
 
-Production deployment is performed explicitly through the Netlify CLI. GitHub pushes alone do not trigger deployment unless continuous deployment is subsequently connected in Netlify.
+Check build progress and errors in [Netlify deployments](https://app.netlify.com/projects/maria-begue-reimagined/deploys). A failed build does not replace the last successful production deployment.
 
 ## Content and attribution
 
